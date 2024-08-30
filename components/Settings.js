@@ -1,43 +1,45 @@
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {faCircleQuestion, faCircleHalfStroke, faBell, faWindowRestore, faCodeBranch, faCode} from '@fortawesome/free-solid-svg-icons';
+import { myContext } from '../context/context';
 
 const Settings = () => {
+    const {darkMode, setDarkMode, permissions, setPermissions} = useContext(myContext)
   return (
     <View style={styles.settingsContainer}>
       <Text style={[styles.optionHeading]}>Theme</Text>
       <View style={styles.optionBox}>
-        <TouchableOpacity style={styles.box} onPress={()=>{}}>
+        <TouchableOpacity style={styles.box} onPress={()=>{setDarkMode(!darkMode)}}>
             <View style={styles.settingBoxIcon}>
             <FontAwesomeIcon icon={faCircleHalfStroke} size={20} color="#9b9494" />
             <Text style={styles.optionText}>Dark</Text>
             </View>
-            <Switch style={styles.settingBoxSwitch} value={true} onValueChange={() => console.log('Switch changed')} />
+            <Switch style={styles.settingBoxSwitch} value={darkMode} onValueChange={() => setDarkMode(!darkMode)} />
         </TouchableOpacity>
       </View>
       <Text style={[styles.optionHeading]}>Permissions</Text>
       <View style={styles.optionBox}>
-        <TouchableOpacity style={styles.box} onPress={()=>{}}>
+        <TouchableOpacity style={styles.box} onPress={()=>{setPermissions(!permissions.access, 'access')}}>
             <View style={styles.settingBoxIcon}>
             <FontAwesomeIcon icon={faCircleQuestion} size={20} color="#9b9494" />
             <Text style={styles.optionText}>Accessbility Apps</Text>
             </View>
-            <Switch style={styles.settingBoxSwitch} value={true} onValueChange={() => console.log('Switch changed')} />
+            <Switch style={styles.settingBoxSwitch} value={permissions.access} onValueChange={() => {setPermissions(!permissions.access, 'access')}} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box} onPress={()=>{}}>
+        <TouchableOpacity style={styles.box} onPress={()=>{setPermissions(!permissions.notify, 'notify')}}>
             <View style={styles.settingBoxIcon}>
             <FontAwesomeIcon icon={faBell} size={20} color="#9b9494" />
             <Text style={styles.optionText}>Notification</Text>
             </View>
-            <Switch style={styles.settingBoxSwitch} value={true} onValueChange={() => console.log('Switch changed')} />
+            <Switch style={styles.settingBoxSwitch} value={permissions.notify} onValueChange={() => {setPermissions(!permissions.notify, 'notify')}} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.box} onPress={()=>{}}>
+        <TouchableOpacity style={styles.box} onPress={()=>{setPermissions(!permissions.overlay, 'overlay')}}>
             <View style={styles.settingBoxIcon}>
             <FontAwesomeIcon icon={faWindowRestore} size={20} color="#9b9494" />
             <Text style={styles.optionText}>Popup over other apps</Text>
             </View>
-            <Switch style={styles.settingBoxSwitch} value={true} onValueChange={() => console.log('Switch changed')} />
+            <Switch style={styles.settingBoxSwitch} value={permissions.overlay} onValueChange={() => {setPermissions(!permissions.overlay, 'overlay')}} />
         </TouchableOpacity>
       </View>
       <Text style={[styles.optionHeading]}>App Info</Text>
