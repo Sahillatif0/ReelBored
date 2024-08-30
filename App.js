@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import { StyleSheet, Text, View, Button, Alert, NativeModules, DeviceEventEmitter, Linking, ScrollView } from 'react-native';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import BlockReels from './components/BlockReels';
@@ -9,6 +9,7 @@ import Analytics from './components/Analytics';
 import MenuBar from './components/MenuBar';
 import Settings from './components/Settings';
 import TimerPopup from './components/TimerPopup';
+import { myContext } from './context/context';
 
 export default function App() {
   // useEffect(() => {
@@ -20,6 +21,43 @@ export default function App() {
   //     subscription.remove(); // Clean up listener when the component is unmounted
   //   };
   // }, []);
+  const [data, setdata] = useState(
+    {
+      darkMode: false,
+      setDarkMode: (val)=>
+        {setdata((prevData)=>({...prevData, darkMode: val}));},
+      permissions: {access: false, notify: false, overlay: false},
+      setPermissions: (val, perm)=>
+        {setdata((prevData)=>({...prevData, permissions: {...prevData.permissions, [perm]: val}}));},
+      showTimerPopup: {show: false, social: ''},
+      setShowTimerPopup: (val)=>
+        {setdata((prevData)=>({...prevData, showTimerPopup: val}));},
+      breakTime: {yt: 0, fb: 0, insta: 0, snap: 0, maxLimit: 30},
+      setBreakTime: (val, social)=>
+        {setdata((prevData)=>({...prevData, breakTime: {...prevData.breakTime, [social]: val}}));},
+      remBreakTime: {yt: 0, fb: 0, insta: 0, snap: 0},
+      setRemBreakTime: (val, social)=>
+        {setdata((prevData)=>({...prevData, remBreakTime: {...prevData.remBreakTime, [social]: val}}));},
+      isReelBoredActive: {yt: false, fb: false, insta: false, snap: false},
+      setIsReelBoredActive: (val, social)=>
+        {setdata((prevData)=>({...prevData, isReelBoredActive: {...prevData.isReelBoredActive, [social]: val}}));}
+
+
+    });
+  const value = useMemo(() => ({
+    darkMode: data.darkMode,
+    setDarkMode: data.setDarkMode,
+    showTimerPopup: data.showTimerPopup,
+    setShowTimerPopup: data.setShowTimerPopup,
+    breakTime: data.breakTime,
+    setBreakTime: data.setBreakTime,
+    remBreakTime: data.remBreakTime,
+    setRemBreakTime: data.setRemBreakTime,
+    isReelBoredActive: data.isReelBoredActive,
+    setIsReelBoredActive: data.setIsReelBoredActive,
+    permissions: data.permissions,
+    setPermissions: data.setPermissions
+  }), [data]);
   const [showAppIntro, setShowAppIntro] = useState(false);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState('home')
@@ -68,7 +106,8 @@ export default function App() {
     return <AppIntro setShowAppIntro={setShowAppIntro} />;
   }
   return (
-    <View style={styles.container}>
+    <myContext.Provider value={value}>
+      <View style={styles.container}>
         <Text style={styles.heading}>ReelBored</Text>
         <ScrollView>
         {active==='home'?<><Analytics />
@@ -76,8 +115,9 @@ export default function App() {
         <Settings/>}
         </ScrollView>
         <MenuBar active={active} setActive={setActive}/>
-        <TimerPopup/>
+        {data.showTimerPopup.show && <TimerPopup/>}
      </View>
+     </myContext.Provider>
   );
 }
 
