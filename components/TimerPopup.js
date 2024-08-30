@@ -1,55 +1,26 @@
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
-import React from 'react'
-import { RadioButton } from 'react-native-paper';
+import React, { useContext } from 'react'
+import { myContext } from '../context/context';
+import TimeSelectOption from './TimeSelectOption';
 
 const TimerPopup = () => {
     const [allowTime, setAllowTime] = React.useState(5);
+    const { showTimerPopup, setShowTimerPopup, setIsReelBoredActive, setBreakTime, breakTime, setRemBreakTime, remBreakTime } = useContext(myContext);
+    
   return (
     <View style={styles.big_container}>
     <View style={styles.container}>
         <Text style={styles.popupHeading}>Turn off ReelBored</Text>
-        <TouchableOpacity style={styles.option} onPress={() => setAllowTime(5)}>
-            <RadioButton value={5}
-            status={ allowTime === 5 ? 'checked' : 'unchecked' }
-            style={styles.radiobutton}
-            color='#49a549'
-            unallowTimeColor='#f5f5f5be'
-            onPress={() => setAllowTime(5)}/>
-            <Text style={styles.popupText}>5 minutes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => setAllowTime(10)}>
-            <RadioButton value={10}
-                status={ allowTime === 10 ? 'checked' : 'unchecked' }
-                style={styles.radiobutton}
-                color='#49a549'
-                unallowTimeColor='#f5f5f5be'
-                onPress={() => setAllowTime(10)}/>
-            <Text style={styles.popupText}>10 minutes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => setAllowTime(15)}>
-            <RadioButton value={15}
-                status={ allowTime === 15 ? 'checked' : 'unchecked' }
-                style={styles.radiobutton}
-                color='#49a549'
-                unallowTimeColor='#f5f5f5be'
-                onPress={() => setAllowTime(15)}/>
-            <Text style={styles.popupText}>15 minutes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => setAllowTime(30)}>
-            <RadioButton value={30}
-            status={ allowTime === 30 ? 'checked' : 'unchecked' }
-            style={styles.radiobutton}
-            color='#49a549'
-            unallowTimeColor='#f5f5f5be'
-            onPress={() => setAllowTime(30)}/>
-            <Text style={styles.popupText}>30 minutes</Text>
-        </TouchableOpacity>
+        <TimeSelectOption time={5} allowTime={allowTime} setAllowTime={setAllowTime}/>
+        <TimeSelectOption time={10} allowTime={allowTime} setAllowTime={setAllowTime}/>
+        <TimeSelectOption time={15} allowTime={allowTime} setAllowTime={setAllowTime}/>
+        <TimeSelectOption time={30} allowTime={allowTime} setAllowTime={setAllowTime}/>
         <View style={styles.buttons}>
             <TouchableOpacity>
-                <Text style={[styles.popupText, {color: '#f5f5f5', marginRight: 13}]}>Cancel</Text>
+                <Text style={[styles.popupText, {color: '#f5f5f5', marginRight: 13}]} onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setIsReelBoredActive(true, showTimerPopup.social); setAllowTime(0)}}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text style={[styles.popupText, {color: '#49a549', fontWeight: 'bold'}]}>Confirm</Text>
+                <Text style={[styles.popupText, {color: '#49a549', fontWeight: 'bold'}]} disabled={(breakTime.maxLimit - breakTime[showTimerPopup.social])<allowTime?true:false} onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setBreakTime(allowTime+breakTime[showTimerPopup.social], showTimerPopup.social); setRemBreakTime(remBreakTime[showTimerPopup.social]+allowTime, showTimerPopup.social);}}>Confirm</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -81,13 +52,6 @@ const styles = StyleSheet.create({
         margin: 10,
         fontWeight: 'bold',
         alignSelf: 'flex-start'
-    },
-    option: {
-        display: 'flex',
-        flexDirection: 'row',
-        width: '90%',
-        alignItems: 'center',
-        marginVertical: 7
     },
     popupText: {
         color: '#f5f5f5be',
