@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState, useMemo} from 'react';
 import { StyleSheet, Text, View, Button, Alert, NativeModules, DeviceEventEmitter, Linking, ScrollView } from 'react-native';
+const { MyAccessibilityService } = NativeModules;
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import BlockReels from './components/BlockReels';
 import AppIntro from './components/AppIntro';
@@ -10,17 +11,28 @@ import MenuBar from './components/MenuBar';
 import Settings from './components/Settings';
 import TimerPopup from './components/TimerPopup';
 import { myContext } from './context/context';
+import DifficultyPopup from './components/DifficultyPopup';
 
 export default function App() {
-  // useEffect(() => {
-  //   const subscription = DeviceEventEmitter.addListener('ShortsDetected', (message) => {
-  //     Alert.alert('Detected', message); // Show popup when event is received
-  //   });
+  useEffect(() => {
+    // const subscription = DeviceEventEmitter.addListener('ShortsDetected', (message) => {
+    //   Alert.alert('Detected', message); // Show popup when event is received
+    // });
 
-  //   return () => {
-  //     subscription.remove(); // Clean up listener when the component is unmounted
-  //   };
-  // }, []);
+    // return () => {
+    //   subscription.remove(); // Clean up listener when the component is unmounted
+    // };
+    console.log(MyAccessibilityService)
+    // MyAccessibilityService.sendMessageToReact('Hello from React Native hello', (response) => {
+      //   console.log(response); // Logs: "Received message: Hello from React Native"
+    // });
+    
+    // Receive data from Kotlin
+    MyAccessibilityService.receiveMessageFromReact().then((data) => {
+      console.log(data); // Logs: "Hello from Kotlin"
+    });
+
+  }, []);
   const [data, setdata] = useState(
     {
       darkMode: false,
@@ -32,6 +44,9 @@ export default function App() {
       showTimerPopup: {show: false, social: ''},
       setShowTimerPopup: (val)=>
         {setdata((prevData)=>({...prevData, showTimerPopup: val}));},
+      showDifficultyPopup: {show: false, social: ''},
+      setShowDifficultyPopup: (val, social)=>
+        {setdata((prevData)=>({...prevData, showDifficultyPopup: {show: val,social:social}}));},
       breakTime: {yt: 0, fb: 0, insta: 0, snap: 0, maxLimit: 30},
       setBreakTime: (val, social)=>
         {setdata((prevData)=>({...prevData, breakTime: {...prevData.breakTime, [social]: val}}));},
@@ -40,21 +55,34 @@ export default function App() {
         {setdata((prevData)=>({...prevData, remBreakTime: {...prevData.remBreakTime, [social]: val}}));},
       isReelBoredActive: {yt: false, fb: false, insta: false, snap: false},
       setIsReelBoredActive: (val, social)=>
-        {setdata((prevData)=>({...prevData, isReelBoredActive: {...prevData.isReelBoredActive, [social]: val}}));}
+        {setdata((prevData)=>({...prevData, isReelBoredActive: {...prevData.isReelBoredActive, [social]: val}}));},
+      isDifficultyHard: {yt: false, fb: false, insta: false, snap: false},
+      setIsDifficultyHard: (val, social)=>
+        {setdata((prevData)=>({...prevData, isDifficultyHard: {...prevData.isDifficultyHard, [social]: val}}));}
 
 
+    });
+    MyAccessibilityService.sendMessageToReact(data.breakTime.yt,data.breakTime.fb,data.breakTime.insta,data.breakTime.snap,data.breakTime.maxLimit).then((response)=>{
+      console.log(response);
+    });
+    MyAccessibilityService.receiveMessageFromReact().then((data) => {
+      console.log(data); // Logs: "Hello from Kotlin"
     });
   const value = useMemo(() => ({
     darkMode: data.darkMode,
     setDarkMode: data.setDarkMode,
     showTimerPopup: data.showTimerPopup,
     setShowTimerPopup: data.setShowTimerPopup,
+    showDifficultyPopup: data.showDifficultyPopup,
+    setShowDifficultyPopup: data.setShowDifficultyPopup,
     breakTime: data.breakTime,
     setBreakTime: data.setBreakTime,
     remBreakTime: data.remBreakTime,
     setRemBreakTime: data.setRemBreakTime,
     isReelBoredActive: data.isReelBoredActive,
     setIsReelBoredActive: data.setIsReelBoredActive,
+    isDifficultyHard: data.isDifficultyHard,
+    setIsDifficultyHard: data.setIsDifficultyHard,
     permissions: data.permissions,
     setPermissions: data.setPermissions
   }), [data]);
@@ -116,6 +144,7 @@ export default function App() {
         </ScrollView>
         <MenuBar active={active} setActive={setActive}/>
         {data.showTimerPopup.show && <TimerPopup/>}
+        {data.showDifficultyPopup.show && <DifficultyPopup/>}
      </View>
      </myContext.Provider>
   );

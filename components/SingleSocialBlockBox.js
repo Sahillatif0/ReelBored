@@ -5,7 +5,7 @@ import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import { myContext } from '../context/context'
 
 const SingleSocialBlockBox = ({icon,name,symbol,showdifficulty, changeShowDifficulty }) => {
-    const {showTimerPopup, setShowTimerPopup, isReelBoredActive,setIsReelBoredActive,remBreakTime } = useContext(myContext)
+    const {showTimerPopup, setShowTimerPopup, isReelBoredActive,setIsReelBoredActive,remBreakTime, setShowDifficultyPopup, isDifficultyHard } = useContext(myContext)
   return (
     <TouchableOpacity  style={styles.social_container} onPress={()=>{setIsReelBoredActive(!isReelBoredActive[symbol], symbol); changeShowDifficulty(symbol); isReelBoredActive[symbol]&&setShowTimerPopup({show: true, social: symbol});}}>
         <View style={styles.social_container_switch}>
@@ -18,9 +18,9 @@ const SingleSocialBlockBox = ({icon,name,symbol,showdifficulty, changeShowDiffic
                 <Switch style={styles.toggleSwitch} onChange={()=>{setIsReelBoredActive(!isReelBoredActive[symbol], symbol); changeShowDifficulty(symbol); isReelBoredActive[symbol]&&setShowTimerPopup({show: true, social: symbol});}} value={isReelBoredActive[symbol]}/>
             </View>
         </View>
-        {showdifficulty[symbol] && <TouchableOpacity style={styles.social_container_difficulty}>
+        {showdifficulty[symbol] && <TouchableOpacity style={styles.social_container_difficulty} onPress={()=>{setShowDifficultyPopup(true,symbol)}}>
             <View style={[styles.difficulty_container, {justifyContent: 'flex-start'}]}><Text style={styles.difficulty_text}>Difficulty</Text></View>
-            <View style={styles.difficulty_container}><Text style={styles.difficulty_text}>Easy</Text>
+            <View style={styles.difficulty_container}><Text style={styles.difficulty_text}>{isDifficultyHard[symbol]?"Hard":"Easy"}</Text>
             <FontAwesomeIcon icon={faAngleRight} size={15} color="#e7e7e7" />
             </View>
         </TouchableOpacity>}

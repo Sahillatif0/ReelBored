@@ -1,4 +1,4 @@
-package com.reelbored
+package com.sahillatif.reelbored
 
 import android.app.Application
 import android.content.res.Configuration

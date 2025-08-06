@@ -16,10 +16,10 @@ const TimerPopup = () => {
         <TimeSelectOption time={15} allowTime={allowTime} setAllowTime={setAllowTime}/>
         <TimeSelectOption time={30} allowTime={allowTime} setAllowTime={setAllowTime}/>
         <View style={styles.buttons}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setIsReelBoredActive(true, showTimerPopup.social); setAllowTime(0)}}>
                 <Text style={[styles.popupText, {color: '#f5f5f5', marginRight: 13}]} onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setIsReelBoredActive(true, showTimerPopup.social); setAllowTime(0)}}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setBreakTime(allowTime+breakTime[showTimerPopup.social], showTimerPopup.social); setRemBreakTime(remBreakTime[showTimerPopup.social]+allowTime, showTimerPopup.social);}}>
                 <Text style={[styles.popupText, {color: '#49a549', fontWeight: 'bold'}]} disabled={(breakTime.maxLimit - breakTime[showTimerPopup.social])<allowTime?true:false} onPress={()=>{setShowTimerPopup({show: false, social: showTimerPopup.social}); setBreakTime(allowTime+breakTime[showTimerPopup.social], showTimerPopup.social); setRemBreakTime(remBreakTime[showTimerPopup.social]+allowTime, showTimerPopup.social);}}>Confirm</Text>
             </TouchableOpacity>
         </View>
